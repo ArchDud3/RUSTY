@@ -1,4 +1,3 @@
-use std::fs::{self, DirEntry};
 use std::io::{self, Write};
 use std::path::Path;
 
@@ -52,7 +51,7 @@ fn run() -> Result<(), io::Error> {
 
         let mut parts = input.split_whitespace();
         let command = parts.next().unwrap();
-        let args = parts;
+        let mut args = parts;
 
         match command {
             "ls" => {
