@@ -1,41 +1,37 @@
+use std::fs::{self, DirEntry};
+use std::io::{self, Write};
 use std::path::Path;
-use std::fs;
-use std::io;
-use std::io::{ErrorKind, Write};
 
+#[derive(Debug)]
 struct File {
     path: String,
     is_directory: bool,
 }
 
 impl File {
-    fn new(path: &str) -> Result<File, io::Error> {
+    fn new(path: &str) -> io::Result<File> {
         let metadata = fs::metadata(path)?;
-        let is_directory = metadata.is_dir();
-
         Ok(File {
             path: path.to_owned(),
-            is_directory,
+            is_directory: metadata.is_dir(),
         })
     }
 }
 
-fn list_directory(path: &str) -> Result<Vec<File>, io::Error> {
-    let mut files = Vec::new();
-
-    for entry in fs::read_dir(path)? {
+fn list_directory(dir: &str) -> io::Result<Vec<File>> {
+    let mut files = vec![];
+    for entry in fs::read_dir(dir)? {
         let entry = entry?;
-        let file = File::new(entry.path().to_str().unwrap())?;
+        let path = entry.path();
+        let file = File::new(path.to_str().unwrap())?;
         files.push(file);
     }
-
     Ok(files)
 }
 
 fn print_files(files: &[File], prefix: &str) {
     for file in files {
-        let symbol = if file.is_directory { "📁" } else { "📄" };
-        println!("{} {} {}", prefix, symbol, file.path);
+        println!("{}{}", prefix, file.path);
     }
 }
 
@@ -99,3 +95,9 @@ fn run() -> Result<(), io::Error> {
             }
         }
     }
+    Ok(())
+}
+
+fn main() {
+    run().unwrap();
+}
