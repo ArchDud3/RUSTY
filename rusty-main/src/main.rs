@@ -1,4 +1,4 @@
-use std::fs::{self, DirEntry};
+use std::fs::{self};
 use std::io::{self, Write};
 use std::path::Path;
 
